@@ -1,4 +1,9 @@
 
+./cache/*
+./media/*
+
+
+
 # Created by https://www.gitignore.io/api/python,eclipse,phpstorm
 
 ### Eclipse ###
