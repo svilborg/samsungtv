@@ -1,11 +1,11 @@
 import getopt
+import os
 import sys
 import time
-import os
-from dlna_device import DlnaDevice
-from ssdp import SSDPDiscovery
-from utils import detect_ip_address
+
+from dlna import DlnaDevice, SSDPDiscovery, Cache, utils
 from upnpservice import UPnPServiceAVTransport, UPnPServiceRendering
+
 
 VERSION = "1.0"
 
@@ -25,6 +25,7 @@ class SamsungTVActionList(object):
         self.label = label
         self.result = result
         self.fields = fields
+        
         pass
 
     def __repr__(self):
@@ -42,24 +43,61 @@ class SamsungTVActionList(object):
 class SamsungTvApp(object):
     """docstring for SamsungTvApp"""
     def __init__(self):
-        self.ip = detect_ip_address()
-        self.service = UPnPServiceAVTransport('192.168.0.100')
-        self.service_rendering = UPnPServiceRendering('192.168.0.100')
+        
+        tv_device = self._get_samsungtv()
+
+        if not tv_device:
+            print "Unable to find a tv device in local network"
+            Cache.clear("devices")            
+            exit(1)
+
+        self.app_ip = utils.detect_ip_address()
+
+        self.service = UPnPServiceAVTransport(tv_device.ip)
+        self.service_rendering = UPnPServiceRendering(tv_device.ip)
         self.volume_step = 2
         pass
 
-    def scan(self, arg):
+    def _get_samsungtv (self):
+
+        devices = self._get_devices()
+
+        for key,device in devices.items():
+            print device
+
+            if device.info['deviceType'] == "urn:schemas-upnp-org:device:MediaRenderer:1" :
+                return device
+
+        return None
+
+    def _get_devices(self, refresh = False):
         discovery = SSDPDiscovery()
+        devices = {}
+
+        # dir_path = os.path.dirname(os.path.realpath(__file__))
+        if refresh == True or not Cache.get("devices"):
+            result = discovery.discover("ssdp:all")
+
+            for headers in result:
+                devices[headers['location']] = DlnaDevice(headers['location'])
+                # print devices[headers['location']]
+
+            Cache.set("devices", devices)
+        else :
+            devices = Cache.get("devices")
+
+        return devices
+
+    def scan(self, arg):
         
         print "Scanning ..."
+        
+        devices = self._get_devices()
 
-        devices = {}
-        result = discovery.discover("ssdp:all")
-
-        for headers in result:
-            devices[headers['location']] = DlnaDevice(headers['location'])
-            print devices[headers['location']]
-
+        for key,device in devices.items():
+            print device
+            # pprint.pprint( device.info)
+        
     def stop_httpd(self, args=None):
         
         if os.path.isfile("./stvpid") :
