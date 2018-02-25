@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-from upnpservice import UPnPService
+
 import base64
+from base import UPnPServiceBase
 
-class UPnPServiceWfaConfig(UPnPService):
-
+class UPnPServiceWfaConfig(UPnPServiceBase):
 
     def __init__(self, ip, port = "49152"):
         self.ip = ip

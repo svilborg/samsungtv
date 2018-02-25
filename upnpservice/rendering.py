@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-from upnpservice import UPnPService
+from base import UPnPServiceBase
 
-class UPnPServiceRendering(UPnPService):
+class UPnPServiceRendering(UPnPServiceBase):
 
     def __init__(self, ip, port = "9197"):
         self.id = '0'

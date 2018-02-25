@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 import xml.etree.cElementTree as XML
-from upnpservice import UPnPService
+from base import UPnPServiceBase
 
-class UPnPServiceAVTransport(UPnPService):
+class UPnPServiceAVTransport(UPnPServiceBase):
 
     def __init__(self, ip, port = "9197"):
         self.id = '0'
@@ -33,7 +33,6 @@ class UPnPServiceAVTransport(UPnPService):
             ('InstanceID', self.id),
             ('CurrentURI', uri),
             ('CurrentURIMetaData', '')
-            # ('CurrentURIMetaData', '&lt;DIDL-Lite xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:sec="http://www.sec.co.kr/"&gt;&lt;item id="f-0" parentID="0" restricted="0"&gt;&lt;dc:title&gt;Video&lt;/dc:title&gt;&lt;dc:creator&gt;vGet&lt;/dc:creator&gt;&lt;upnp:class&gt;object.item.videoItem&lt;/upnp:class&gt;&lt;res protocolInfo="http-get:*:video/mp4:DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=01700000000000000000000000000000" sec:URIType="public"&gt;$URI&lt;/res&gt;&lt;/item&gt;&lt;/DIDL-Lite&gt;')
         ]
 
         response = self._send_cmd(action, args)
@@ -248,8 +247,8 @@ if __name__ == "__main__":
 
     #     time.sleep(5)
 
-    #     print "===================="
-    #     pprint.pprint (t.get_position_info())
+    print "===================="
+    pprint.pprint (t.get_position_info())
 
     #     pass
 

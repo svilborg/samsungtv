@@ -3,9 +3,8 @@ import re
 import requests
 import xml.etree.cElementTree as XML
 
-class UPnPService(object):
+class UPnPServiceBase(object):
     
-
     soap_body_template = (
         '<?xml version="1.0"?>'
         '<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"'

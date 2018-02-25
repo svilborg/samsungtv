@@ -5,9 +5,7 @@ import os
 from dlna_device import DlnaDevice
 from ssdp import SSDPDiscovery
 from utils import detect_ip_address
-# from upnpservice_rendering import UPnPServiceRendering
-# from upnpservice_avtransport import UPnPServiceAVTransport
-# from upnpservice import upnpservice_avtransport
+from upnpservice import UPnPServiceAVTransport, UPnPServiceRendering
 
 VERSION = "1.0"
 
@@ -67,11 +65,11 @@ class SamsungTvApp(object):
         if os.path.isfile("./stvpid") :
             os.system("cat ./stvpid | xargs kill && rm ./stvpid")
 
-        return None
+        return "Http Server Stopped"
         
     def start_httpd(self, host = "", port = 8000):
         self.stop_httpd()
-        os.system("nohup python ./serve.py & echo $! > ./stvpid")
+        os.system("nohup python ./httpd/serve.py & echo $! > ./stvpid")
 
         print "Http Server Started @ " + host + ":" + str(port) 
 
