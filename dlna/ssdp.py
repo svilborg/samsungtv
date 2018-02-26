@@ -5,6 +5,9 @@ class SSDPDiscovery(object):
     ip = "239.255.255.250"
     port = 1900
 
+    ST_ALL = "ssdp:all"
+    ST_ROOT = "upnp:rootdevice"
+
     def _get_response(self, response):
         headers, addr = response
    
@@ -28,16 +31,19 @@ class SSDPDiscovery(object):
             'MAN: "ssdp:discover"',
             'ST: {st}',
             'MX: {mx}','',''])
-        
+
+        message = message.format(self, st=service, mx=mx)        
+
         socket.setdefaulttimeout(timeout)
         responses = {}
 
         for _ in range(retries):
+
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
             
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 2)
-            sock.sendto(message.format(self, st=service, mx=mx), (self.ip, self.port))
+            sock.sendto(message, (self.ip, self.port))
             
             while True:
                 try:
@@ -53,9 +59,10 @@ if __name__ == "__main__":
 
     import pprint
 
-    discovery = SSDPDiscovery()
-    result = discovery.discover("ssdp:all")
+    discovery = SSDPDiscovery() 
+    # result = discovery.discover(SSDPDiscovery.ST_ALL)
+    result = discovery.discover(SSDPDiscovery.ST_ROOT)
+    
     for headers in result:
-        print headers['location']
         pprint.pprint(headers)
         

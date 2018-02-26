@@ -1,7 +1,7 @@
 import re
 import requests
 import xml.etree.cElementTree as XML
-from utils import etree_to_dict 
+
 
 class DialService(object):
 
@@ -17,10 +17,9 @@ class DialService(object):
 
         return r.content
 
-
     def get(self, name):
         r = requests.get(self.url + name)
-        
+
         if r.status_code == 200:
             xmlstring = r.content
 
@@ -28,11 +27,11 @@ class DialService(object):
 
             ns = '{urn:dial-multiscreen-org:schemas:dial}'
 
-            name = xml.findtext('.//'+ns+'name')
-            state = xml.findtext('.//'+ns+'state')
-            version = xml.findtext('.//'+ns+'version')
-            options = xml.find('.//'+ns+'options')
-            additional_data = xml.find('.//'+ns+'additionalData')
+            name = xml.findtext('.//' + ns + 'name')
+            state = xml.findtext('.//' + ns + 'state')
+            version = xml.findtext('.//' + ns + 'version')
+            options = xml.find('.//' + ns + 'options')
+            additional_data = xml.find('.//' + ns + 'additionalData')
             atom = xml.find('.//{http://www.w3.org/2005/Atom}link')
             install_url = None
 
@@ -71,7 +70,7 @@ class DialService(object):
 
         if app and app['state'] != "installable":
             print "TODO"
-            # requests.get(app['install_url'])
+            requests.delete(app['install_url'])
 
 
 if __name__ == "__main__":
@@ -99,5 +98,3 @@ if __name__ == "__main__":
     print "=================="
     print service.stop(name)
     # print service.install("uk.co.bbc.iPlayer")
-
-

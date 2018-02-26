@@ -1,16 +1,16 @@
-
 from utils import Cache
 from ssdp import SSDPDiscovery
 from device import DlnaDevice
 
+
 class DlnaDevices(object):
 
-    def __init__(self, cache = None):
+    def __init__(self, cache=None):
         self.cache = cache
 
         pass
 
-    def _get_devices(self) :
+    def _get_devices(self):
         discovery = SSDPDiscovery()
         result = discovery.discover("ssdp:all")
         devices = {}
@@ -20,31 +20,31 @@ class DlnaDevices(object):
 
         return devices
 
-    def get_devices(self, refresh = False):
-        devices = {}
+    def get_devices(self, refresh=False):
 
-        if self.cache :
+        if self.cache:
             if refresh == True or not Cache.get(self.cache):
-                devices = self._get_devices()
+                result = self._get_devices()
 
-                Cache.set(self.cache, devices)
-            else :
-                devices = Cache.get(self.cache)
-        else :
-            devices = self._get_devices()
+                Cache.set(self.cache, result)
+            else:
+                result = Cache.get(self.cache)
+        else:
+            result = self._get_devices()
 
-        return devices
+        return result
 
-    def get_device_by_type(self, type = ""):
+    def get_device_by_type(self, dtype=""):
 
-        for key,device in self.get_devices().items():
-            if device.info['deviceType'] == "urn:schemas-upnp-org:device:MediaRenderer:1" :
-                return device
+        for key, dev in self.get_devices().items():
+            if dev.info['deviceType'] == dtype:
+                return dev
         return None
 
-    def clean(self) :
-        if self.cache :
+    def clean(self):
+        if self.cache:
             Cache.clear(self.cache)
+
 
 if __name__ == "__main__":
 
@@ -53,10 +53,9 @@ if __name__ == "__main__":
     d = DlnaDevices("d_test_cache")
     devices = d.get_devices()
 
-    for location, device in devices.items() :
+    for location, device in devices.items():
         print str(device) + "   - " + device.info['deviceType']
         print ""
 
     print "============"
     print d.get_device_by_type("urn:schemas-upnp-org:device:MediaRenderer:1")
-
