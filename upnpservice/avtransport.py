@@ -94,7 +94,7 @@ class UPnPServiceAVTransport(UPnPServiceBase):
 
     def get_transport_info(self):
 
-        action = 'GetTransporget_transport_info'
+        action = 'GetTransportInfo'
         args = [('InstanceID', self.id)]
 
         response = self._send_cmd(action, args)
@@ -110,19 +110,19 @@ class UPnPServiceAVTransport(UPnPServiceBase):
     
         return self._get_result(response)
         
-    def play(self):
+    def play(self, speed = "1"):
 
         action = 'Play'
-        args = [('InstanceID', self.id), ('Speed', 1)]
+        args = [('InstanceID', self.id), ('Speed', speed)]
 
         response = self._send_cmd(action, args)
     
         return self._get_result(response)
 
-    def pause(self):
+    def pause(self, speed = "1"):
 
         action = 'Pause'
-        args = [('InstanceID', self.id), ('Speed', 1)]
+        args = [('InstanceID', self.id), ('Speed', speed)]
 
         response = self._send_cmd(action, args)
     
@@ -158,7 +158,6 @@ class UPnPServiceAVTransport(UPnPServiceBase):
     def get_position_info(self):
         action = 'GetPositionInfo'
         args = [('InstanceID', self.id)]
-
         
 
         response = self._send_cmd(action, args)
@@ -166,8 +165,8 @@ class UPnPServiceAVTransport(UPnPServiceBase):
         result = self._get_result(response)
 
         metadata = result['TrackMetaData']
-        
-        if metadata != '':
+                
+        if metadata and metadata != '':
             xml = XML.fromstring(metadata)
             title = xml.findtext('.//{http://purl.org/dc/elements/1.1/}title')
             artist = xml.findtext('.//{http://purl.org/dc/elements/1.1/}creator')
@@ -246,21 +245,44 @@ if __name__ == "__main__":
     #         print t.next()
 
     #     time.sleep(5)
+    # pprint.pprint (t.get_transport_info())
+    # exit(1)
 
-    print "===================="
-    pprint.pprint (t.get_position_info())
 
-    #     pass
-
-    exit(1)
-
-    # # print t.set_url("http://192.168.0.103:8000/media/test.jpg")
     # print t.set_url("http://192.168.0.103:8000/media/t.mp4")
-    # # print t.set_next_url("http://192.168.0.103:8000/media/test3.jpg")
-    # # print t.seek('REL_TIME', '00:00:05')
+    # print t.set_url("http://192.168.0.103:8000/media/test.jpg#1")
+    # print t.set_next_url("http://192.168.0.103:8000/media/test2.jpg#2")
+    # time.sleep(1)
+
+    # print "===================="
+    # print t.play()
+
+    # print "===================="
+    # pprint.pprint (t.get_position_info())
+    
+    # time.sleep(2)
+    # print "===================="
+    
+    # time.sleep(4)
+    # print "===================="
+    # print t.pause() 
+ 
+    # print "===================="
+    # pprint.pprint(t.media_info())
+
+    # time.sleep(4)
+    # print t.next()
 
     # print "===================="
     # pprint.pprint(t.media_info())
+
+    # exit(1)
+
+
+    # # print t.set_url("http://192.168.0.103:8000/media/test.jpg")
+    # # print t.set_next_url("http://192.168.0.103:8000/media/test3.jpg")
+    # # print t.seek('REL_TIME', '00:00:05')
+
 
 
     # # print t.prefetch_url("http://192.168.0.103:8000/media/test3.jpg")

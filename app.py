@@ -3,7 +3,7 @@ import os
 import sys
 import time
 
-from dlna import DlnaDevice, SSDPDiscovery, Cache, utils
+from dlna import DlnaDevice, DlnaDevices, Cache, utils
 from upnpservice import UPnPServiceAVTransport, UPnPServiceRendering
 
 
@@ -43,58 +43,32 @@ class SamsungTVActionList(object):
 class SamsungTvApp(object):
     """docstring for SamsungTvApp"""
     def __init__(self):
-        
-        tv_device = self._get_samsungtv()
+
+        devices = DlnaDevices("devices")
+
+        tv_device = devices.get_device_by_type("urn:schemas-upnp-org:device:MediaRenderer:1")
 
         if not tv_device:
             print "Unable to find a tv device in local network"
-            Cache.clear("devices")            
+            devices.clean() # Cleanup if cache           
             exit(1)
 
         self.app_ip = utils.detect_ip_address()
 
         self.service = UPnPServiceAVTransport(tv_device.ip)
         self.service_rendering = UPnPServiceRendering(tv_device.ip)
+        
         self.volume_step = 2
+
         pass
-
-    def _get_samsungtv (self):
-
-        devices = self._get_devices()
-
-        for key,device in devices.items():
-            print device
-
-            if device.info['deviceType'] == "urn:schemas-upnp-org:device:MediaRenderer:1" :
-                return device
-
-        return None
-
-    def _get_devices(self, refresh = False):
-        discovery = SSDPDiscovery()
-        devices = {}
-
-        # dir_path = os.path.dirname(os.path.realpath(__file__))
-        if refresh == True or not Cache.get("devices"):
-            result = discovery.discover("ssdp:all")
-
-            for headers in result:
-                devices[headers['location']] = DlnaDevice(headers['location'])
-                # print devices[headers['location']]
-
-            Cache.set("devices", devices)
-        else :
-            devices = Cache.get("devices")
-
-        return devices
 
     def scan(self, arg):
         
         print "Scanning ..."
-        
-        devices = self._get_devices()
 
-        for key,device in devices.items():
+        devices = DlnaDevices("devices")
+
+        for key,device in devices.get_devices():
             print device
             # pprint.pprint( device.info)
         
@@ -107,7 +81,7 @@ class SamsungTvApp(object):
         
     def start_httpd(self, host = "", port = 8000):
         self.stop_httpd()
-        os.system("nohup python ./httpd/serve.py & echo $! > ./stvpid")
+        os.system("nohup python ./httpd/server.py & echo $! > ./stvpid")
 
         print "Http Server Started @ " + host + ":" + str(port) 
 
@@ -162,7 +136,7 @@ class SamsungTvApp(object):
 
         return SamsungTVAction(
             "Incr Volime to %s" % (vol),
-            self.service.volume(vol)
+            self.service_rendering.volume(vol)
         )
         
     def voldown(self, arg):
@@ -170,7 +144,7 @@ class SamsungTvApp(object):
 
         return SamsungTVAction(
             "Decr Volime to %s" % (vol),
-            self.service.volume(vol)
+            self.service_rendering.volume(vol)
         )
     
     def mute(self, arg):

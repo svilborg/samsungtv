@@ -17,14 +17,15 @@ class DlnaDevice(object):
       self.port = parsed.port
       self.path = parsed.path
       self.location = location
+      self.name = "N/A"
+      self.applicationUrl = None
 
       data = self.__get_data(location)
       
       self.info = data['root']['device']
       self.name = self.info['friendlyName']
-      self.services = data['root']['device']['serviceList']['service']      
-
-      # pprint.pprint(self.services)
+      self.services = data['root']['device']['serviceList']['service']
+      self.applicationUrl = data['headers'].get('application-url')
 
     def __get_data(self, location):
         r = requests.get(location)
@@ -34,6 +35,8 @@ class DlnaDevice(object):
 
         xml = XML.fromstring(xmlstring)
         data = etree_to_dict(xml)
+        data['headers'] = r.headers
+
         return data
 
     def __repr__(self):

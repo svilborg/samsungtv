@@ -49,4 +49,13 @@ class SSDPDiscovery(object):
                     
         return responses.values()
 
+if __name__ == "__main__":
 
+    import pprint
+
+    discovery = SSDPDiscovery()
+    result = discovery.discover("ssdp:all")
+    for headers in result:
+        print headers['location']
+        pprint.pprint(headers)
+        
