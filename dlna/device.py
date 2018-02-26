@@ -1,11 +1,9 @@
 
 import xml.etree.cElementTree as XML
 import requests
-# import pprint
 import re
 import urlparse
 from utils import etree_to_dict
-
 
 class DlnaDevice(object):
 
