@@ -1,20 +1,19 @@
 #!/usr/bin/env python
 from base import UPnPServiceBase
 
+
 class UPnPServiceRendering(UPnPServiceBase):
 
-    def __init__(self, ip, port = "9197"):
+    def __init__(self, ip, port="9197"):
+        super(UPnPServiceRendering, self).__init__(ip, port)
+
         self.id = '0'
-        self.ip = ip
-        self.port = port
         self.endpoint = '/dmr/upnp/control/RenderingControl1'
-        self.stype='RenderingControl'
-        
-        pass
+        self.stype = 'RenderingControl'
 
     def mute(self, mute):
         mute_value = '1' if mute is True else '0'
-        
+
         action = 'SetMute'
         args = [('InstanceID', self.id), ('Channel', 'Master'), ('DesiredMute', mute_value)]
 
@@ -23,16 +22,16 @@ class UPnPServiceRendering(UPnPServiceBase):
         return self._get_result(response)
 
     def tv_slide_show(self):
-        
+
         action = 'X_GetTVSlideShow'
         args = [('InstanceID', self.id)]
 
         response = self._send_cmd(action, args)
-    
+
         return self._get_result(response)
 
     def set_tv_slide_show(self, state, theme):
-        
+
         action = 'X_SetTVSlideShow'
         args = [('InstanceID', self.id), ('CurrentShowState', state), ('CurrentShowTheme', theme)]
 
@@ -41,7 +40,7 @@ class UPnPServiceRendering(UPnPServiceBase):
         return self._get_result(response)
 
     def zoom(self, x, y, w=0, h=0):
-        
+
         action = 'X_SetZoom'
         args = [('InstanceID', self.id), ('x', x), ('y', y), ('w', w), ('h', h)]
 
@@ -50,55 +49,53 @@ class UPnPServiceRendering(UPnPServiceBase):
         return self._get_result(response)
 
     def audio_selection(self):
-        
+
         action = 'X_GetAudioSelection'
         args = [('InstanceID', self.id)]
 
         response = self._send_cmd(action, args)
-                
+
         return self._get_result(response)
 
     def video_selection(self):
-        
+
         action = 'X_GetVideoSelection'
         args = [('InstanceID', self.id)]
 
         response = self._send_cmd(action, args)
-                
+
         return self._get_result(response)
 
-
     def presets(self):
-        
+
         action = 'ListPresets'
         args = [('InstanceID', self.id)]
 
         response = self._send_cmd(action, args)
-        
+
         return self._get_result(response)
 
+    def select_preset(self, name=""):
 
-    def select_preset(self, name = ""):
-        
         action = 'SelectPreset'
         args = [('InstanceID', self.id), ("PresetName", name)]
 
         response = self._send_cmd(action, args)
-        
+
         return self._get_result(response)
-        
+
     def volume(self, volume=False):
-        if volume:        
-            
+        if volume:
+
             action = 'SetVolume'
             args = [('InstanceID', self.id), ('Channel', 'Master'), ('DesiredVolume', volume)]
 
             response = self._send_cmd(action, args)
-    
+
             return self._get_result(response)
-        
+
         else:
-            
+
             action = 'GetVolume'
             args = [('InstanceID', self.id), ('Channel', 'Master')]
 
@@ -107,6 +104,7 @@ class UPnPServiceRendering(UPnPServiceBase):
             result = self._get_result(response)
 
             return int(result['CurrentVolume'])
+
 
 if __name__ == "__main__":
 
@@ -124,21 +122,20 @@ if __name__ == "__main__":
 
     import time
 
-
-    #https://i.imgur.com/BMvDxow.jpg
-    #3847x808
+    # https://i.imgur.com/BMvDxow.jpg
+    # 3847x808
 
     x = 0
     y = 20
     w = 800
-    h  = 360
+    h = 360
 
     while True:
         time.sleep(0.1)
         print t.zoom(x, y, w, h)
 
         # start +=10
-        x +=3
+        x += 3
         print (x, y, w, h)
         # y +=10
         pass
