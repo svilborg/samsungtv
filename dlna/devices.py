@@ -12,7 +12,7 @@ class DlnaDevices(object):
 
     def _get_devices(self):
         discovery = SSDPDiscovery()
-        result = discovery.discover("ssdp:all")
+        result = discovery.discover(SSDPDiscovery.ST_ALL)
         devices = {}
 
         for headers in result:
@@ -55,7 +55,11 @@ if __name__ == "__main__":
 
     for location, device in devices.items():
         print str(device) + "   - " + device.info['deviceType']
+        # print device.info
         print ""
 
     print "============"
-    print d.get_device_by_type("urn:schemas-upnp-org:device:MediaRenderer:1")
+    # print d.get_device_by_type("urn:schemas-upnp-org:device:MediaRenderer:1")
+    device = d.get_device_by_type("urn:dial-multiscreen-org:device:dialreceiver:1")
+    print device
+    print device.applicationUrl

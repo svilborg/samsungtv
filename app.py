@@ -3,11 +3,12 @@ import os
 import sys
 import time
 
-from dlna import DlnaDevice, DlnaDevices, Cache, utils
+from dlna import DlnaDevices, DialService, utils
 from upnpservice import UPnPServiceAVTransport, UPnPServiceRendering
-
+from httpd import HttpProxyServerCtrl
 
 VERSION = "1.0"
+
 
 class SamsungTVAction(object):
 
@@ -19,17 +20,18 @@ class SamsungTVAction(object):
     def __repr__(self):
         return self.label
 
+
 class SamsungTVActionList(object):
 
-    def __init__(self, label, result=None, fields = []):
+    def __init__(self, label, result=None, fields=[]):
         self.label = label
         self.result = result
         self.fields = fields
-        
+
         pass
 
     def __repr__(self):
-        
+
         res = "\n"
         res += self.label + "\n"
         for item in self.result:
@@ -40,94 +42,100 @@ class SamsungTVActionList(object):
 
         return res
 
+
 class SamsungTvApp(object):
     """docstring for SamsungTvApp"""
+
     def __init__(self):
 
         devices = DlnaDevices("devices")
 
         tv_device = devices.get_device_by_type("urn:schemas-upnp-org:device:MediaRenderer:1")
+        dial_device = devices.get_device_by_type("urn:dial-multiscreen-org:device:dialreceiver:1")
 
         if not tv_device:
             print "Unable to find a tv device in local network"
-            devices.clean() # Cleanup if cache           
+            devices.clean()  # Cleanup if cache
+            exit(1)
+
+        if not dial_device:
+            print "Unable to find a ttv dial device in local network"
+            devices.clean()  # Cleanup if cache
             exit(1)
 
         self.app_ip = utils.detect_ip_address()
+        self.volume_step = 2
 
         self.service = UPnPServiceAVTransport(tv_device.ip)
         self.service_rendering = UPnPServiceRendering(tv_device.ip)
-        
-        self.volume_step = 2
+        self.service_dial = DialService(dial_device.applicationUrl)
+        self.httpctrl = HttpProxyServerCtrl(port=8000)
 
         pass
 
     def scan(self, arg):
-        
+
         print "Scanning ..."
 
         devices = DlnaDevices("devices")
 
-        for key,device in devices.get_devices():
+        for key, device in devices.get_devices().items():
             print device
             # pprint.pprint( device.info)
-        
+            pass
+
     def stop_httpd(self, args=None):
-        
-        if os.path.isfile("./stvpid") :
-            os.system("cat ./stvpid | xargs kill && rm ./stvpid")
 
+        self.httpctrl.stop()
         return "Http Server Stopped"
-        
-    def start_httpd(self, host = "", port = 8000):
-        self.stop_httpd()
-        os.system("nohup python ./httpd/server.py & echo $! > ./stvpid")
 
-        print "Http Server Started @ " + host + ":" + str(port) 
+    def start_httpd(self, args=None):
+        self.httpctrl.start()
+
+        print "Http Server Started"
 
     def file(self, arg):
-       self.start_httpd()
+        self.start_httpd()
 
-       time.sleep(2)
+        time.sleep(2)
 
-       url=arg
-       self.service.url(url)
-
+        url = arg
+        self.service.url(url)
 
     def add_file(self, arg):
 
         return SamsungTVAction(
-            "Added URL %s" % (arg), 
+            "Added URL %s" % (arg),
             self.service.set_next_url(arg)
         )
 
     def play(self, arg):
         return SamsungTVAction(
-            "Play %s" % (arg), 
+            "Play %s" % (arg),
             self.service.play()
         )
 
     def stop(self, arg):
         return SamsungTVAction(
-            "Stop %s" % (arg), 
+            "Stop %s" % (arg),
             self.service.stop()
         )
 
     def next(self, arg):
         return SamsungTVAction(
-            "Next %s" % (arg), 
+            "Next %s" % (arg),
             self.service.next()
         )
 
     def prev(self, arg):
         return SamsungTVAction(
-            "Stop %s" % (arg), 
+            "Stop %s" % (arg),
             self.service.previous()
         )
 
     def volume(self, arg):
         return SamsungTVAction(
-            "Set Volime to %s" % (arg), 
+            "Set Volime to %s" % (arg),
             self.service_rendering.volume(arg)
         )
 
@@ -138,7 +146,7 @@ class SamsungTvApp(object):
             "Incr Volime to %s" % (vol),
             self.service_rendering.volume(vol)
         )
-        
+
     def voldown(self, arg):
         vol = str(self.service_rendering.volume() - self.volume_step)
 
@@ -146,30 +154,53 @@ class SamsungTvApp(object):
             "Decr Volime to %s" % (vol),
             self.service_rendering.volume(vol)
         )
-    
+
     def mute(self, arg):
         return SamsungTVAction(
             "Set Mute On",
             self.service_rendering.mute(True)
         )
 
-    def unmute(self, arg):    
+    def unmute(self, arg):
         return SamsungTVAction(
             "Set Mute Off",
             self.service_rendering.mute(False)
+        )
+
+    def app_on(self, arg):
+        return SamsungTVAction(
+            "Start App %s " % (arg),
+            self.service_dial.start(arg)
+        )
+
+    def app_off(self, arg):
+        return SamsungTVAction(
+            "Stop App %s " % (arg),
+            self.service_dial.stop(arg)
+        )
+
+    def app(self, arg):
+        print "App %s " % (arg)
+        print self.service_dial.get(arg)
+        return ""
+
+    def app_install(self, arg):
+        return SamsungTVAction(
+            "Install App %s " % (arg),
+            self.service_dial.install(arg)
         )
 
     def run(self, method, arg):
         return self.__getattribute__(method)(arg)
 
 
-
 def usage_option(name, description):
-    return "\t--%s     \t %s"%(name, description)
+    return "\t--%s     \t %s" % (name, description)
+
 
 def usage():
     print ""
-    print "Usage: " +  sys.argv[0] + " [OPTIONS]"
+    print "Usage: " + sys.argv[0] + " [OPTIONS]"
     print usage_option("scan", "SSPD Scan")
     print usage_option("volume", "Set Volume")
     print usage_option("volup", "Incr Volume")
@@ -179,17 +210,20 @@ def usage():
     print usage_option("stop_httpd", "Stop http server")
     print ""
 
+
 if __name__ == "__main__":
     tv = SamsungTvApp()
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "s:hv", ["scan", "help", "version", 
-            "volume=", "volup", "voldown", "mute", "unmute", 
-            "file=", 
-            "add_file=", 
-            "play", "stop", "next", "prev", 
-            "start_httpd", "stop_httpd"
-        ])
+        opts, args = getopt.getopt(sys.argv[1:], "s:hv", ["scan", "help", "version",
+                                                          "volume=", "volup", "voldown", "mute", "unmute",
+                                                          "file=",
+                                                          "add_file=",
+                                                          "play", "stop", "next", "prev",
+                                                          "start_httpd", "stop_httpd",
+
+                                                          "app=", "app_on=", "app_off=", "app_install="
+                                                          ])
     except getopt.GetoptError, err:
         print(err)
         sys.exit(-1)

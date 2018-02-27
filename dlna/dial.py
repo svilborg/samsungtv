@@ -11,9 +11,9 @@ class DialService(object):
 
     def start(self, name):
         r = requests.post(self.url + name)
-        print r.content
-        print r.headers
-        print r.status_code
+        # print r.content
+        # print r.headers
+        # print r.status_code
 
         return r.content
 
@@ -46,8 +46,8 @@ class DialService(object):
             data['state'] = state
             data['install_url'] = install_url
             data['version'] = version
-            data['options'] = options.attrib if options else None
-            data['links'] = atom.attrib if atom else None
+            data['options'] = options.attrib if options is not None else None
+            data['links'] = atom.attrib if atom is not None else None
             data['additional_data'] = {}
 
             if additional_data:
@@ -68,9 +68,9 @@ class DialService(object):
     def stop(self, name):
         app = self.get(name)
 
-        if app and app['state'] != "installable":
-            print "TODO"
-            requests.delete(app['install_url'])
+        if app and app['state'] == "running":
+            if app['links'] is  not None :
+                requests.delete(self.url + name + "/" + app['links']['rel'])
 
 
 if __name__ == "__main__":
@@ -94,6 +94,10 @@ if __name__ == "__main__":
 
     print "=================="
     print service.get("uk.co.bbc.iPlayer")
+
+    import time
+
+    time.sleep(2)
 
     print "=================="
     print service.stop(name)

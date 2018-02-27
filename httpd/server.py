@@ -95,7 +95,9 @@ if __name__ == "__main__":
     for o, arg in opts:
         if o in ("-h", "--host"):
             host = arg
-            # sys.exit()
+        elif o in ("-p", "--port"):
+            port = int(arg)
+
         else:
             print "Unknown Options"
 
@@ -104,7 +106,7 @@ if __name__ == "__main__":
         httpd = HTTPServer((host, port), HttpProxyServer)
     except Exception as e:
         # print e
-        sys.stderr.write(str(e));
+        sys.stderr.write(str(e))
         sys.exit(-1)
 
     print "Serving on " + host + ":" + str(port) + " ... "

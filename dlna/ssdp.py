@@ -60,7 +60,6 @@ if __name__ == "__main__":
     import pprint
 
     discovery = SSDPDiscovery() 
-    # result = discovery.discover(SSDPDiscovery.ST_ALL)
     result = discovery.discover(SSDPDiscovery.ST_ROOT)
     
     for headers in result:
