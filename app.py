@@ -1,5 +1,4 @@
 import getopt
-import os
 import sys
 import time
 
@@ -73,13 +72,14 @@ class SamsungTvApp(object):
 
         pass
 
-    def scan(self, arg):
+    @staticmethod
+    def scan(rescan=False):
 
         print "Scanning ..."
 
         devices = DlnaDevices("devices")
 
-        for key, device in devices.get_devices().items():
+        for key, device in devices.get_devices(rescan).items():
             print device
             # pprint.pprint( device.info)
             pass
@@ -212,10 +212,10 @@ def usage():
 
 
 if __name__ == "__main__":
-    tv = SamsungTvApp()
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "s:hv", ["scan", "help", "version",
+        opts, args = getopt.getopt(sys.argv[1:], "s:hv", ["help", "version",
+                                                          "scan", "rescan",
                                                           "volume=", "volup", "voldown", "mute", "unmute",
                                                           "file=",
                                                           "add_file=",
@@ -235,6 +235,12 @@ if __name__ == "__main__":
         elif o in ("-V", "--version"):
             print VERSION
             sys.exit(0)
+        elif o in ("-s", "--scan"):
+            SamsungTvApp.scan()
+        elif o in ("--rescan"):
+            SamsungTvApp.scan(True)
         else:
+            tv = SamsungTvApp()
+
             method = o.replace("--", "")
             print tv.run(method, arg)
