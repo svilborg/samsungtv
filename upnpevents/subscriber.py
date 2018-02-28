@@ -1,7 +1,7 @@
 import requests
 
 
-class Subscriber:
+class EventSubscriber:
     
     # http SUBSCRIBE http://192.168.0.100:9197/dmr/upnp/event/RenderingControl1 TIMEOUT:1000 NT:'upnp:event'
     def __init__ (self) :
@@ -89,7 +89,7 @@ class Subscriber:
 
 if __name__ == '__main__':
 
-    s = Subscriber()
+    s = EventSubscriber()
 
     result = s.subscribe()
     print result
