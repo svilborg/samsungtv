@@ -38,8 +38,8 @@ class DlnaDevice(object):
 
     def __repr__(self):
         res = ""
-        res += self.name + "  [ " + self.info["modelName"] + ", " \
-               + self.info["modelDescription"] + " ] @  " + self.location + "\n"
+        res += self.name + "  [ " + str(self.info["modelName"]) + ", " \
+               + str(self.info["modelDescription"]) + " ] @  " + self.location + "\n"
 
         return res
 
