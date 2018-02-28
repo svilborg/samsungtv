@@ -2,16 +2,15 @@ import requests
 
 
 class EventSubscriber:
-    
-    # http SUBSCRIBE http://192.168.0.100:9197/dmr/upnp/event/RenderingControl1 TIMEOUT:1000 NT:'upnp:event'
-    def __init__ (self, url="", callback="") :
 
-        self.url = u'http://192.168.0.100:9197/upnp/event/RenderingControl1'
+    # http SUBSCRIBE http://192.168.0.100:9197/dmr/upnp/event/RenderingControl1 TIMEOUT:1000 NT:'upnp:event'
+    def __init__(self, url="", callback=""):
+
+        self.url = url
         self.callback = callback
-        # 'http://192.168.0.103:8007'
         pass
 
-    def subscribe(self, timeout = 1000):
+    def subscribe(self, timeout=1000):
         headers = {
             u'TIMEOUT': '5000',
             u'NT': 'upnp:event',
@@ -42,10 +41,10 @@ class EventSubscriber:
 
         return result
 
-    def renew(self, sid, timeout = 1000):
+    def renew(self, sid, timeout=1000):
         headers = {
             u'TIMEOUT': str(timeout),
-            u'SID' : sid,
+            u'SID': sid,
             u'User-Agent': 'HTTPSamsungCtrlCli'
         }
 
@@ -82,14 +81,14 @@ class EventSubscriber:
                                     headers=headers)
         if response.status_code == 200:
             return True
-        else :
+        else:
             raise Exception('Error', response.status_code)
 
         pass
 
 
 if __name__ == '__main__':
-
+    # u'http://192.168.0.100:9197/upnp/event/RenderingControl1'
     s = EventSubscriber()
 
     result = s.subscribe()

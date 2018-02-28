@@ -30,6 +30,8 @@ def etree_to_dict(t):
 class SubscribeHttpRequestHandler(BaseHTTPRequestHandler):
     NS = "{urn:schemas-upnp-org:event-1-0}"
 
+
+
     def do_NOTIFY(self):
 
         result = {}
@@ -38,37 +40,50 @@ class SubscribeHttpRequestHandler(BaseHTTPRequestHandler):
         content_len = int(self.headers.get('content-length', 0))
         data = self.rfile.read(content_len)
 
-        properties = {}
 
+        print "RAWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+        print data
+
+
+        properties = {}
+        event = {}
         if data:
             doc = cElementTree.fromstring(data)
+
             for propnode in doc.findall('./{0}property'.format(self.NS)):
                 for prop in propnode.getchildren():
-                    xml_string = re.sub(' xmlns="[^"]+"', '', prop.text, count=1)
-                    pxml = cElementTree.fromstring(xml_string)
-
-                    print "--------------------------------------"
-                    print cElementTree.tostring(pxml)
-                    print etree_to_dict(pxml)
-                    print "--------------------------------------"
-
+                    # "Raw" Properties
                     properties[prop.tag] = prop.text
 
+                    if prop.text is not None and prop.text.startswith("<") :
+                        # // Extract Event
+                        xml_string = re.sub(' xmlns="[^"]+"', '', prop.text, count=1)
+                        pxml = cElementTree.fromstring(xml_string)
+                        # pp = pxml.findall('./InstanceID/*')
+                        # event = etree_to_dict(pp)
+
+                        event = {}
+                        for node in pxml.findall('./InstanceID/*'):
+                            event[node.tag] = node.attrib
+
+                    # print "--------------------------------------"
+                    # print cElementTree.tostring(pxml)
+                    # print cElementTree.tostring(pp)
+                    # print etree_to_dict(pxml)
+                    # print "--------------------------------------"
+
         result["ip"] = ip
-        result["properties"] = properties
         result["sid"] = self.headers.getheader("sid")
         result["nt"] = self.headers.getheader("nt")
         result["nts"] = self.headers.getheader("nts")
+        result["event"] = event
 
-        result["raw"] = {
-            "data": data,
-            "headers": self.headers.items()
-        }
+        # result["raw"] = {
+        # result["properties"] = properties
+        #     "data": data,
+        #     "headers": self.headers.items()
+        # }
 
-        from xml.sax.saxutils import unescape
-
-        print unescape(data)
-        print "===================================  "
         self._log(result)
 
         response = "<html><body><h1>200 OK</h1></body></html>"
@@ -78,6 +93,7 @@ class SubscribeHttpRequestHandler(BaseHTTPRequestHandler):
         self.send_header('Content-Length', len(response))
         self.send_header('Connection', 'close')
         self.end_headers()
+
         self.wfile.write(response.encode("UTF-8"))
 
     def do_OPTIONS(self):
@@ -115,8 +131,10 @@ class SubscribeHttpRequestHandler(BaseHTTPRequestHandler):
     @staticmethod
     def _log(result):
         import pprint
-        pprint.pprint(result)
 
+        print " # ==================================="
+        pprint.pprint(result)
+        print ""
 
 if __name__ == "__main__":
 
