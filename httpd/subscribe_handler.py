@@ -27,7 +27,7 @@ def etree_to_dict(t):
     return d
 
 
-class SubscribeRequestHandler(BaseHTTPRequestHandler):
+class SubscribeHttpRequestHandler(BaseHTTPRequestHandler):
     NS = "{urn:schemas-upnp-org:event-1-0}"
 
     def do_NOTIFY(self):
@@ -44,7 +44,6 @@ class SubscribeRequestHandler(BaseHTTPRequestHandler):
             doc = cElementTree.fromstring(data)
             for propnode in doc.findall('./{0}property'.format(self.NS)):
                 for prop in propnode.getchildren():
-
                     xml_string = re.sub(' xmlns="[^"]+"', '', prop.text, count=1)
                     pxml = cElementTree.fromstring(xml_string)
 
@@ -127,7 +126,7 @@ if __name__ == "__main__":
     try:
         # SubscribeRequestHandler.protocol_version = "HTTP/1.0"
 
-        httpd = HTTPServer((host, port), SubscribeRequestHandler)
+        httpd = HTTPServer((host, port), SubscribeHttpRequestHandler)
 
     except Exception as e:
         sys.stderr.write(str(e))
