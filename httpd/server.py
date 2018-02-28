@@ -9,25 +9,27 @@ from urllib2 import urlopen
 
 class HttpProxyServer(BaseHTTPRequestHandler):
 
-    def log_message(self, format, *args):
-        print format
-        print args
-        pass
-
-    def log_request(self, code='-', size='-'):
-        print code
-        pass
+    dir_path = os.path.dirname(os.path.realpath(__file__)) + "/"
 
     def response_success(self):
         url = self.path[1:]  # replace '/'
 
-        if os.path.exists(url):
-            f = open(url)
-            content_type = mimetypes.guess_type(url)[0]
-        else:
-            f = urlopen(url=url)
+        file = self.dir_path + "/" + url
 
+        if os.path.exists(file):
+            f = open(file)
+            content_type = mimetypes.guess_type(file)[0]
+
+            f.close()
+        elif url.startswith("http"):
+            f = urlopen(url=url)
             content_type = f.info().getheaders("Content-Type")[0]
+
+            f.close()
+        else:
+            self.send_response(404, "Not Found")
+            self.end_headers()
+            return None
 
         self.send_response(200, "ok")
         self.send_header('Access-Control-Allow-Origin', '*')
@@ -46,28 +48,31 @@ class HttpProxyServer(BaseHTTPRequestHandler):
     def do_GET(self):
         url = self.path[1:]  # replace '/'
 
-        content_type = ''
-        if os.path.exists(url):
-            f = open(url)
-            content_type = mimetypes.guess_type(url)[0]
-            size = os.path.getsize(url)
-        elif not url or not url.startswith('http'):
-            self.response_success()
-            return
-        else:
+        file = self.dir_path + "/" + url
+        
+        if os.path.exists(file):
+            f = open(file)
+            content_type = mimetypes.guess_type(file)[0]
+            size = os.path.getsize(file)
+            name = os.path.basename(file)
+        elif url.startswith("http"):
             f = urlopen(url=url)
+            content_type = f.info().getheaders("Content-Type")[0]
+            size = f.info().getheaders("Content-Length")[0]
+            name = os.path.basename(url)
+        else :
+            self.send_response(404, "Not Found")
+            self.end_headers()
+            return None
 
         try:
-            if not content_type:
-                # content_type = f.info().getheaders("Content-Type")[0]
-                size = f.info().getheaders("Content-Length")[0]
-
             self.send_response(200)
             self.send_header('Access-Control-Allow-Origin', '*')
             self.send_header("Content-Type", content_type)
-            self.send_header("Content-Disposition", 'attachment; filename="{}"'.format(os.path.basename(url)))
+            self.send_header("Content-Disposition", 'attachment; filename="{}"'.format(name))
             self.send_header("Content-Length", str(size))
             self.end_headers()
+            
             shutil.copyfileobj(f, self.wfile)
         finally:
             f.close()
@@ -103,9 +108,11 @@ if __name__ == "__main__":
 
     try:
         HttpProxyServer.protocol_version = "HTTP/1.0"
+        HttpProxyServer.dir_path = os.path.dirname(os.path.realpath(__file__)) + "/../media"
+
         httpd = HTTPServer((host, port), HttpProxyServer)
+    
     except Exception as e:
-        # print e
         sys.stderr.write(str(e))
         sys.exit(-1)
 

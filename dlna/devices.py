@@ -23,7 +23,7 @@ class DlnaDevices(object):
     def get_devices(self, refresh=False):
 
         if self.cache:
-            if refresh == True or not Cache.get(self.cache):
+            if refresh is True or not Cache.get(self.cache):
                 result = self._get_devices()
 
                 Cache.set(self.cache, result)
