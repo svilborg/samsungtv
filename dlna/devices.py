@@ -35,7 +35,12 @@ class DlnaDevices(object):
         return result
 
     def get_device_by_type(self, dtype=""):
+        # type: (dev) -> DlnaDevice
+        """
 
+        :param dtype:
+        :return DlnaDevice: Device obj
+        """
         for key, dev in self.get_devices().items():
             if dev.info['deviceType'] == dtype:
                 return dev

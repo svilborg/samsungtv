@@ -1,5 +1,6 @@
 import os
 import pickle
+import re
 import socket
 from collections import defaultdict
 
@@ -44,6 +45,18 @@ def detect_ip_address():
     s.close()
     return ip_address
 
+
+def clean_ns_from_list (data=None) :
+    if data is None:
+        data = {}
+
+    result = {}
+    if data:
+        for key, el in data.items():
+            key = re.sub('{[^{}]+}', '', key, count=1)
+            result[key] = el
+
+    return result
 
 def etree_to_dict(t):
     d = {t.tag: {} if t.attrib else None}
