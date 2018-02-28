@@ -2,9 +2,7 @@ import getopt
 import sys
 import time
 
-from dlna import DlnaDevices, DialService, utils, DlnaDevice, DlnaDeviceServices
-from upnpevents import EventSubscriber
-from upnpservice import UPnPServiceAVTransport, UPnPServiceRendering
+from dlna import DlnaDevices, utils, DlnaDeviceServices
 from httpd import HttpProxyServerCtrl
 
 VERSION = "1.0"
@@ -50,7 +48,7 @@ class SamsungTvApp(object):
 
         self.host = utils.detect_ip_address()
         self.port = 8000
-        self.uri = "http://"+self.host+":"+str(self.port)
+        self.uri = "http://" + self.host + ":" + str(self.port)
         self.app_ip = utils.detect_ip_address()
         self.volume_step = 2
 
@@ -58,28 +56,6 @@ class SamsungTvApp(object):
 
         tv_device = devices.get_device_by_type(DlnaDevices.MEDIA_RENDERER)
         dial_device = devices.get_device_by_type(DlnaDevices.DIAL_RECEIVER)
-
-        import  pprint
-
-        # import xml.etree.cElementTree as XML
-        #
-        # #
-        # xmlstring = '<Event>\ ' \
-        #             '<InstanceID val="0">\ ' \
-        #             '<Mute channel="Master" val="0" />\ ' \
-        #             '<PresetNameList val="FactoryDefaults" />\ ' \
-        #             '<Volume channel="Master" val="6" /> ' \
-        #             '\</InstanceID> ' \
-        #             '\</Event>'
-        #
-        # xml = XML.fromstring(xmlstring)
-        # event = {}
-        # for node in xml.findall('./InstanceID/*'):
-        #     event[node.tag] = node.attrib
-        #
-        # print event
-        # exit(1)
-
 
         if not tv_device:
             print "Unable to find a tv device in local network"
