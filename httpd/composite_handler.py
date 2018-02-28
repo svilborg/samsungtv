@@ -3,8 +3,8 @@ from BaseHTTPServer import HTTPServer
 import sys
 import os
 
-from httpd.proxy_handler import ProxyHttpRequestHandler
-from httpd.subscribe_handler import SubscribeHttpRequestHandler
+from proxy_handler import ProxyHttpRequestHandler
+from subscribe_handler import SubscribeHttpRequestHandler
 
 
 class CompositeHttpRequestHandler(ProxyHttpRequestHandler, SubscribeHttpRequestHandler):
@@ -18,7 +18,6 @@ if __name__ == "__main__":
 
     try:
         CompositeHttpRequestHandler.dir_path = os.path.dirname(os.path.realpath(__file__)) + "/../media"
-
         httpd = HTTPServer((host, port), CompositeHttpRequestHandler)
 
     except Exception as e:

@@ -18,27 +18,10 @@ class UPnPServiceBase(object):
         '</s:Envelope>')
 
     def __init__(self, ip, port="9197"):
+        self.endpoint = ""
+        self.stype = ""
         self.ip = ip
         self.port = port
-        # self.port = "7678"
-        pass
-
-    # def dial(self, keyc):
-
-    #     # REMOTE_ENDPOINT = '/nservice/RCR/control/dial'
-    #     # action = '"urn:dial-multiscreen-org:service:dial:1#SendKeyCode"'
-    #     # body = '<u:SendKeyCode xmlns:u="urn:dial-multiscreen-org:service:dial:1"><InstanceID>0</InstanceID><KeyCode>'+keyc+'</KeyCode></u:SendKeyCode>'
-
-    #     keyc = 1000
-    #     stype='dial'
-    #     action = 'SendKeyCode'
-    #     args = [ ('KeyCode', str(keyc))
-    #             ,('KeyDescription', 'test')
-    #             ]
-
-    #     response = self._send_command(self.REMOTE_ENDPOINT, action, stype, args)
-
-    #     return self._get_result(response)
 
     def _is_error(self, response):
         m = re.match(r".*errorCode.*", response)
@@ -91,11 +74,8 @@ class UPnPServiceBase(object):
         # print "=================================="
         # print data
         # print "=================================="
-        # print 'http://' + self.ip + ':' + self.port + endpoint
-        # print "=================================="
-        # print "=================================="
-
-        r = requests.post('http://' + self.ip + ':' + self.port + self.endpoint, data=str(data), headers=headers)
+        
+        r = requests.post('http://' + self.ip + ':' + str(self.port) + self.endpoint, data=str(data), headers=headers)
         return r.content
 
     def _parse_error(self, response):

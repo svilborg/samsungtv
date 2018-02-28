@@ -5,12 +5,15 @@ from base import UPnPServiceBase
 
 class UPnPServiceAVTransport(UPnPServiceBase):
 
-    def __init__(self, ip, port="9197"):
+    def __init__(self, ip, port="9197", id='0', config=None):
         super(UPnPServiceAVTransport, self).__init__(ip, port)
 
-        self.id = '0'
-        self.endpoint = '/dmr/upnp/control/AVTransport1'
+        self.id = id
         self.stype = 'AVTransport'
+        self.endpoint = ''
+
+        if config is not None :
+           self.endpoint = config['controlURL']
 
     def url(self, uri):
         action = 'SetAVTransportURI'
@@ -198,7 +201,7 @@ if __name__ == "__main__":
     import pprint
     import time
 
-    t = UPnPServiceAVTransport('192.168.0.100', '9197')
+    t = UPnPServiceAVTransport('192.168.0.100', '9197', config={'controlURL' : '/dmr/upnp/control/AVTransport1'})
 
     # l = [
     # 'http://i.imgur.com/6yHmlwT.jpg',
@@ -270,3 +273,5 @@ if __name__ == "__main__":
     # pprint.pprint(t.get_transport_info())
     print "===================="
     pprint.pprint(t.get_transport_settings())
+
+

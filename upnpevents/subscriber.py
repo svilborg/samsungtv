@@ -4,10 +4,11 @@ import requests
 class EventSubscriber:
     
     # http SUBSCRIBE http://192.168.0.100:9197/dmr/upnp/event/RenderingControl1 TIMEOUT:1000 NT:'upnp:event'
-    def __init__ (self) :
+    def __init__ (self, url="", callback="") :
 
         self.url = u'http://192.168.0.100:9197/upnp/event/RenderingControl1'
-        self.callback = 'http://192.168.0.103:8007'
+        self.callback = callback
+        # 'http://192.168.0.103:8007'
         pass
 
     def subscribe(self, timeout = 1000):

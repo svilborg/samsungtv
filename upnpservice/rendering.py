@@ -4,12 +4,16 @@ from base import UPnPServiceBase
 
 class UPnPServiceRendering(UPnPServiceBase):
 
-    def __init__(self, ip, port="9197"):
+    def __init__(self, ip, port="9197", config=None):
         super(UPnPServiceRendering, self).__init__(ip, port)
 
         self.id = '0'
         self.endpoint = '/dmr/upnp/control/RenderingControl1'
         self.stype = 'RenderingControl'
+
+        if config is not None :
+           self.endpoint = config['controlURL']
+
 
     def mute(self, mute):
         mute_value = '1' if mute is True else '0'
