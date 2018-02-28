@@ -2,7 +2,8 @@ import getopt
 import sys
 import time
 
-from dlna import DlnaDevices, DialService, utils
+from dlna import DlnaDevices, DialService, utils, DlnaDevice, DlnaDeviceServices
+from upnpevents import EventSubscriber
 from upnpservice import UPnPServiceAVTransport, UPnPServiceRendering
 from httpd import HttpProxyServerCtrl
 
@@ -47,10 +48,38 @@ class SamsungTvApp(object):
 
     def __init__(self):
 
+        self.host = utils.detect_ip_address()
+        self.port = 8000
+        self.uri = "http://"+self.host+":"+str(self.port)
+        self.app_ip = utils.detect_ip_address()
+        self.volume_step = 2
+
         devices = DlnaDevices("devices")
 
-        tv_device = devices.get_device_by_type("urn:schemas-upnp-org:device:MediaRenderer:1")
-        dial_device = devices.get_device_by_type("urn:dial-multiscreen-org:device:dialreceiver:1")
+        tv_device = devices.get_device_by_type(DlnaDevices.MEDIA_RENDERER)
+        dial_device = devices.get_device_by_type(DlnaDevices.DIAL_RECEIVER)
+
+        import  pprint
+
+        # import xml.etree.cElementTree as XML
+        #
+        # #
+        # xmlstring = '<Event>\ ' \
+        #             '<InstanceID val="0">\ ' \
+        #             '<Mute channel="Master" val="0" />\ ' \
+        #             '<PresetNameList val="FactoryDefaults" />\ ' \
+        #             '<Volume channel="Master" val="6" /> ' \
+        #             '\</InstanceID> ' \
+        #             '\</Event>'
+        #
+        # xml = XML.fromstring(xmlstring)
+        # event = {}
+        # for node in xml.findall('./InstanceID/*'):
+        #     event[node.tag] = node.attrib
+        #
+        # print event
+        # exit(1)
+
 
         if not tv_device:
             print "Unable to find a tv device in local network"
@@ -62,13 +91,16 @@ class SamsungTvApp(object):
             devices.clean()  # Cleanup if cache
             exit(1)
 
-        self.app_ip = utils.detect_ip_address()
-        self.volume_step = 2
+        # c = DlnaDeviceServices.subscribe_to_all(tv_device, self.uri)
+        # c = DlnaDeviceServices.subscribe_to_all(dial_device, self.uri)
+        # print c
+        # exit(1)
 
-        self.service = UPnPServiceAVTransport(tv_device.ip)
-        self.service_rendering = UPnPServiceRendering(tv_device.ip)
-        self.service_dial = DialService(dial_device.applicationUrl)
-        self.httpctrl = HttpProxyServerCtrl(port=8000)
+        self.service = DlnaDeviceServices.get_service(tv_device, DlnaDeviceServices.SERVICE_AV)
+        self.service_rendering = DlnaDeviceServices.get_service(tv_device, DlnaDeviceServices.SERVICE_RC)
+        self.service_dial = DlnaDeviceServices.get_service(dial_device, DlnaDeviceServices.SERVICE_DIAL)
+
+        self.httpctrl = HttpProxyServerCtrl(port=self.port)
 
         pass
 
@@ -100,6 +132,7 @@ class SamsungTvApp(object):
         time.sleep(2)
 
         url = arg
+        print url
         self.service.url(url)
 
     def add_file(self, arg):

@@ -5,12 +5,15 @@ from base import UPnPServiceBase
 
 class UPnPServiceConnectionManager(UPnPServiceBase):
 
-    def __init__(self, ip, port="9197"):
+    def __init__(self, ip, port="9197", config=None):
         super(UPnPServiceConnectionManager, self).__init__(ip, port)
 
         self.id = '0'
-        self.endpoint = '/dmr/upnp/control/ConnectionManager1'
         self.stype = 'ConnectionManager'
+        self.endpoint = '/dmr/upnp/control/ConnectionManager1'
+
+        if config is not None:
+            self.endpoint = config['controlURL']
 
     def protocol_info(self):
         action = 'GetProtocolInfo'
@@ -74,16 +77,17 @@ if __name__ == "__main__":
 
     print conn
 
-    pprint.pprint(t.protocol_info())
-    # print t.connection_info()
-    # print t.connections()
+    # pprint.pprint(t.protocol_info())
+    print t.connection_info()
+    print t.connections()
 
     from avtransport import UPnPServiceAVTransport
 
-    # av = UPnPServiceAVTransport('192.168.0.100', '9197', conn['AVTransportID'])
+    # av = UPnPServiceAVTransport('192.168.0.100', '9197', config={"controlURL":"/upnp/control/AVTransport1"})
     # print av.get_transport_info()
+    # print av.get_stopped_reason()
+    # print av.media_info()
     # print av.play()
     # print av.stop()
 
     print t.connection_complete(conn["ConnectionID"])
-
