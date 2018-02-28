@@ -5,6 +5,9 @@ from device import DlnaDevice
 
 class DlnaDevices(object):
 
+    MEDIA_RENDERER = "urn:schemas-upnp-org:device:MediaRenderer:1"
+    DIAL_RECEIVER = "urn:dial-multiscreen-org:device:dialreceiver:1"
+
     def __init__(self, cache=None):
         self.cache = cache
 

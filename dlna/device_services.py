@@ -1,6 +1,7 @@
 class DlnaDeviceServices:
     SERVICE_AV = "urn:schemas-upnp-org:service:AVTransport:1"
     SERVICE_RC = "urn:schemas-upnp-org:service:RenderingControl:1"
+    SERVICE_CM = "urn:schemas-upnp-org:service:ConnectionManager:1"
     SERVICE_DIAL = "dial"
 
     @staticmethod
@@ -19,6 +20,10 @@ class DlnaDeviceServices:
             from upnpservice import UPnPServiceRendering
 
             return UPnPServiceRendering(device.ip, device.port, config=device.services[type])
+        elif type == DlnaDeviceServices.SERVICE_CM:
+            from upnpservice import UPnPServiceConnectionManager
+
+            return UPnPServiceConnectionManager(device.ip, device.port, config=device.services[type])
         elif type == DlnaDeviceServices.SERVICE_DIAL:
 
             if device.applicationUrl is not None and device.applicationUrl != "":
@@ -32,16 +37,11 @@ class DlnaDeviceServices:
 
     @staticmethod
     def get_event_subscriber(device, type, callback=""):
-        # # http SUBSCRIBE http://192.168.0.100:9197/dmr/upnp/event/RenderingControl1 TIMEOUT:1000 NT:'upnp:event'
-        # def __init__(self, url="", callback=""):
-        #     self.url = u'http://192.168.0.100:9197/upnp/event/RenderingControl1'
-        #     self.callback = callback
-        #     # 'http://192.168.0.103:8007'
-        #     pass
 
-        if device.services.get(type) :
+        if device.services.get(type):
             url = "http://{}:{}{}".format(device.ip, device.port, device.services[type]['eventSubURL'])
 
+            print "========"
             print device.services[type]
             print url
 
@@ -49,23 +49,24 @@ class DlnaDeviceServices:
 
             return EventSubscriber(url, callback)
 
-        else :
+        else:
             raise Exception("Unsupported event service ()".format(type))
 
         pass
 
     @staticmethod
-    def get_event_subscribers(device, callback = ""):
+    def get_event_subscribers(device, callback=""):
 
         subscribers = {}
 
-        for stype, service in device.services.items() :
-            if service.get('eventSubURL') :
-                subscribers[stype] = DlnaDeviceServices.get_event(device, stype, callback)
+        print device.info
+
+        for stype, service in device.services.items():
+            if service.get('eventSubURL'):
+                subscribers[stype] = DlnaDeviceServices.get_event_subscriber(device, stype, callback)
 
         return subscribers
-    
-    
+
     @staticmethod
     def subscribe(device, type, callback=""):
         subscriber = DlnaDeviceServices.get_event_subscriber(device, type, callback)
@@ -74,5 +75,6 @@ class DlnaDeviceServices:
     @staticmethod
     def subscribe_to_all(device, callback=""):
 
-        for subscriber in DlnaDeviceServices.get_event_subscribers(device, callback) :
+        for stype, subscriber in DlnaDeviceServices.get_event_subscribers(device, callback).items():
+            print subscriber
             subscriber.subscribe()
