@@ -34,11 +34,8 @@ if __name__ == "__main__":
             print "Unknown Options"
 
     try:
-        # ProxyHttpRequestHandler.protocol_version = "HTTP/1.0"
-        # ProxyHttpRequestHandler.dir_path = os.path.dirname(os.path.realpath(__file__)) + "/../media"
-        # httpd = HTTPServer((host, port), ProxyHttpRequestHandler)
-
-        CompositeHttpRequestHandler.dir_path = os.path.dirname(os.path.realpath(__file__)) + "/../media"
+        CompositeHttpRequestHandler.dir_path = os.curdir + "/media"
+        # CompositeHttpRequestHandler.dir_path = os.path.dirname(os.path.realpath(__file__)) + "/../media"
         httpd = HTTPServer((host, port), CompositeHttpRequestHandler)
 
     except Exception as e:

@@ -1,5 +1,5 @@
 from utils import Cache
-from ssdp import SSDPDiscovery
+from samsungtv.services.ssdp import SSDPDiscovery
 from device import DlnaDevice
 
 

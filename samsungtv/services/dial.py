@@ -1,6 +1,6 @@
 import re
 import requests
-import xml.etree.cElementTree as XML
+from xml.etree import cElementTree as XML
 
 
 class DialService(object):
@@ -20,7 +20,10 @@ class DialService(object):
         if r.status_code == 200:
             xmlstring = r.content
 
-            xml = XML.fromstring(xmlstring)
+            try:
+                xml = XML.fromstring(xmlstring)
+            except:
+                raise Exception("XML Parsing Error")
 
             ns = '{urn:dial-multiscreen-org:schemas:dial}'
 
@@ -66,7 +69,7 @@ class DialService(object):
         app = self.get(name)
 
         if app and app['state'] == "running":
-            if app['links'] is  not None :
+            if app['links'] is not None:
                 requests.delete(self.url + name + "/" + app['links']['rel'])
 
 

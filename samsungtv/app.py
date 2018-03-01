@@ -2,6 +2,7 @@ import time
 
 from httpd import HttpProxyServerCtrl
 from dlna import DlnaDevices, utils, DlnaDeviceServices
+from samsungtv.services.remote_control import RemoteControl
 
 VERSION = "1.0"
 
@@ -46,6 +47,7 @@ class SamsungTvApp(object):
 
         self.host = utils.detect_ip_address()
         self.port = 8000
+        self.name = u'SamsungTvApp'
         self.uri = "http://" + self.host + ":" + str(self.port)
         self.app_ip = utils.detect_ip_address()
         self.volume_step = 2
@@ -73,6 +75,7 @@ class SamsungTvApp(object):
         self.service = DlnaDeviceServices.get_service(tv_device, DlnaDeviceServices.SERVICE_AV)
         self.service_rendering = DlnaDeviceServices.get_service(tv_device, DlnaDeviceServices.SERVICE_RC)
         self.service_dial = DlnaDeviceServices.get_service(dial_device, DlnaDeviceServices.SERVICE_DIAL)
+        self.remote_control = RemoteControl("192.168.0.100", name=self.name)
 
         self.httpctrl = HttpProxyServerCtrl(port=self.port)
 
@@ -195,6 +198,18 @@ class SamsungTvApp(object):
         return SamsungTVAction(
             "Install App %s " % (arg),
             self.service_dial.install(arg)
+        )
+
+    def key(self, arg):
+        return SamsungTVAction(
+            "Key Pressed %s" % arg,
+            self.remote_control.command(arg)
+        )
+
+    def launch(self, arg):
+        return SamsungTVAction(
+            "App Launched %s" % arg,
+            self.remote_control.launch(arg)
         )
 
     def run(self, method, arg):

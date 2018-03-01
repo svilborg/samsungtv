@@ -1,3 +1,8 @@
+from samsungtv.services.dial import DialService
+from samsungtv.upnpevents import EventSubscriber
+from samsungtv.upnpservice import UPnPServiceAVTransport, UPnPServiceRendering, UPnPServiceConnectionManager
+
+
 class DlnaDeviceServices:
     SERVICE_AV = "urn:schemas-upnp-org:service:AVTransport:1"
     SERVICE_RC = "urn:schemas-upnp-org:service:RenderingControl:1"
@@ -11,23 +16,18 @@ class DlnaDeviceServices:
             raise Exception("Unsupported service {}".format(type))
 
         if type == DlnaDeviceServices.SERVICE_AV:
-            from upnpservice import UPnPServiceAVTransport
 
             return UPnPServiceAVTransport(device.ip, device.port, config=device.services[type])
 
         elif type == DlnaDeviceServices.SERVICE_RC:
 
-            from upnpservice import UPnPServiceRendering
-
             return UPnPServiceRendering(device.ip, device.port, config=device.services[type])
         elif type == DlnaDeviceServices.SERVICE_CM:
-            from upnpservice import UPnPServiceConnectionManager
 
             return UPnPServiceConnectionManager(device.ip, device.port, config=device.services[type])
         elif type == DlnaDeviceServices.SERVICE_DIAL:
 
             if device.applicationUrl is not None and device.applicationUrl != "":
-                from dlna import DialService
                 return DialService(device.applicationUrl)
             else:
                 raise Exception("Device  does not support service ()".format(type))
@@ -44,8 +44,6 @@ class DlnaDeviceServices:
             print "========"
             print device.services[type]
             print url
-
-            from upnpevents import EventSubscriber
 
             return EventSubscriber(url, callback)
 

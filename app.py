@@ -2,7 +2,7 @@ import getopt
 
 import sys
 
-from samsungtv.dlna import DialService
+from samsungtv.services.dial import DialService
 
 from samsungtv import SamsungTvApp
 
@@ -30,12 +30,11 @@ if __name__ == "__main__":
         opts, args = getopt.getopt(sys.argv[1:], "s:hv", ["help", "version",
                                                           "scan", "rescan",
                                                           "volume=", "volup", "voldown", "mute", "unmute",
-                                                          "file=",
-                                                          "add_file=",
+                                                          "file=", "add_file=",
                                                           "play", "stop", "next", "prev",
                                                           "start_httpd", "stop_httpd",
-
-                                                          "app=", "app_on=", "app_off=", "app_install="
+                                                          "app=", "app_on=", "app_off=", "app_install=",
+                                                          "key="
                                                           ])
     except getopt.GetoptError, err:
         print(err)
