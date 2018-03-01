@@ -23,8 +23,6 @@ class HttpProxyServerCtrl(object):
         logger.info('pid {}'.format(self.pid_file))
         logger.info('server {}'.format(self.server))
 
-        # self.logging.info("Test")
-
     def stop(self):
         if os.path.isfile(self.pid_file):
             cmd = "cat {} | xargs kill && rm {}".format(self.pid_file, self.pid_file)

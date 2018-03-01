@@ -11,9 +11,6 @@ class DialService(object):
 
     def start(self, name):
         r = requests.post(self.url + name)
-        # print r.content
-        # print r.headers
-        # print r.status_code
 
         return r.content
 

@@ -3,7 +3,8 @@ import requests
 import re
 import urlparse
 
-from dlna import utils
+# from dlna import utils
+from samsungtv.dlna import utils
 from utils import etree_to_dict
 
 
