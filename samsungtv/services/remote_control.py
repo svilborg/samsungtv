@@ -30,12 +30,11 @@ class RemoteControl():
 
     def connect(self):
 
-        url = RemoteControl.URL.format(self.host, self.port, self.__encode(self.name))
+        url = RemoteControl.URL.format(self.host, self.port, self._encode(self.name))
 
         self.connection = websocket.create_connection(url, self.timeout)
 
-        response = self.connection.recv()
-        response = json.loads(response)
+        response = self._receive()
 
         if response.get("data") is None or response.get("event") != "ms.channel.connect":
             self.close()
@@ -55,17 +54,41 @@ class RemoteControl():
 
         return False
 
+    def test(self, d):
+
+        # msg = {
+        #     "method": "ms.channel.emit",
+        #     "params": {
+        #         "event": "ed.apps.search",
+        #         # "event": "seek",
+        #         "data": 100,
+        #         "to": "host"
+        #     }
+        # }
+        #
+        # msg = {"method": "ms.channel.emit",
+        #        "params": {
+        #            "event": "ed.installedApp.get", "to": "host"
+        #        }
+        #        }
+
+        response = self._send_and_receive(msg)
+        return response
+
+    def apps(self):
+
+        msg = {
+            "method": "ms.channel.emit",
+            "params": {
+                "event": "ed.installedApp.get",
+                "to": "host"
+            }}
+
+        response = self._send_and_receive(msg)
+
+        return response['data']['data']
+
     def launch(self, app_id=""):
-
-        # msg = {
-        #         "method": "ms.webapplication.start",
-        #        "params" : {"url":"idd"}
-        #        }
-
-        # msg = {
-        #         "method": "ms.application.start",
-        #        "params" : {"id":"idd"}
-        #        }
 
         msg = {
             "method": "ms.channel.emit",
@@ -74,15 +97,13 @@ class RemoteControl():
                 "to": "host",
                 "data": {
                     "appId": app_id,
-                    "action_type": "NATIVE_LAUNCH"}
+                    "action_type": "NATIVE_LAUNCH"
+                }
             }}
 
-        result = self._send(msg)
+        response = self._send_and_receive(msg)
 
-        # response = self.connection.recv()
-        # response = json.loads(response)
-
-        return result
+        return response
 
     def command(self, key_code):
 
@@ -110,7 +131,21 @@ class RemoteControl():
 
         return self.connection.send(data)
 
-    def __encode(self, input):
+    def _receive(self):
+        response = self.connection.recv()
+
+        response = json.loads(response)
+        return response
+
+    def _send_and_receive(self, msg):
+
+        self._send(msg)
+
+        response = self._receive()
+
+        return response
+
+    def _encode(self, input):
         if type(input) != unicode:
             input = input.decode('utf-8')
 
