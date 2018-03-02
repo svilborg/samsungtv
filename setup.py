@@ -13,9 +13,9 @@ with open('HISTORY.rst') as history_file:
 
 requirements = ['websocket-client', ]
 
-setup_requirements = [ ]
+setup_requirements = []
 
-test_requirements = [ ]
+test_requirements = []
 
 setup(
     author="S.Simeonov",
@@ -39,7 +39,12 @@ setup(
     include_package_data=True,
     keywords='samsungtv',
     name='samsungtv',
-    packages=find_packages(include=['samsungtv']),
+    entry_points={
+        'console_scripts': [
+            'samsuntv=cmd:main',
+        ],
+    },
+    packages=find_packages(include=['samsungtv*']),
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
