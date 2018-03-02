@@ -97,6 +97,7 @@ class SamsungTvApp(object):
 
         for key, device in devices.get_devices(rescan).items():
             print device
+            # import pprint
             # pprint.pprint( device.info)
             pass
 

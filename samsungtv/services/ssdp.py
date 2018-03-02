@@ -8,7 +8,7 @@ class SSDPDiscovery(object):
     ST_ALL = "ssdp:all"
     ST_ROOT = "upnp:rootdevice"
 
-    def discover(self, service, timeout=5.0, retries=1, mx=3):
+    def discover(self, service, timeout=10.0, retries=3, mx=3):
 
         message = "\r\n".join([
             'M-SEARCH * HTTP/1.1',

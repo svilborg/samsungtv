@@ -57,7 +57,9 @@ class DialService(object):
 
             return data
 
-        return None
+        else :
+            raise Exception("App Error - {}".format(r.status_code))
+
 
     def install(self, name):
         app = self.get(name)
