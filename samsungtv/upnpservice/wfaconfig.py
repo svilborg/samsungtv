@@ -11,20 +11,20 @@ class UPnPServiceWfaConfig(UPnPServiceBase):
 
         self.endpoint = '/wps_control'
         self.stype = 'WFAWLANConfig'
+        self.sns = "schemas-wifialliance-org"
 
     def get_device_info(self):
         action = 'GetDeviceInfo'
         args = []
 
-        response = super(UPnPServiceWfaConfig, self)._send_cmd(action, args)
+        response = self._send_cmd(action, args)
 
-        res = super(UPnPServiceWfaConfig, self)._get_result(response)
+        res = self._get_result(response)
+
+        if res.get("faultcode"):
+            raise Exception("Error {}".format(res.get("faultstring")), res.get("faultstring"))
+
+        if not res.get("NewDeviceInfo") :
+            raise  Exception("Missing Device Info")
 
         return base64.b64decode(res['NewDeviceInfo'])
-
-
-if __name__ == "__main__":
-    print "UPnPServiceWfaConfig \n"
-    t = UPnPServiceWfaConfig('192.168.0.1')
-
-    print t.get_device_info()

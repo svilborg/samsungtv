@@ -5,8 +5,6 @@ from tests.mocks import mock_response
 
 from samsungtv.services.dial import DialService
 
-requests.post = mock.MagicMock(side_effect=mock_response)
-
 
 class TestDialService(TestCase):
 
@@ -25,7 +23,6 @@ class TestDialService(TestCase):
     #
     #     service = DialService("httrp://fake.me/test")
     #     result = service.get("Netflix")
-
 
     # def test_real(self):
     #     service = DialService("http://192.168.0.100:8080/ws/app/")
@@ -52,4 +49,3 @@ class TestDialService(TestCase):
     #     print "=================="
     #     print service.stop(name)
     #     # print service.install("uk.co.bbc.iPlayer")
-

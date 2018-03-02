@@ -3,7 +3,6 @@ import requests
 
 class EventSubscriber:
 
-    # http SUBSCRIBE http://192.168.0.100:9197/dmr/upnp/event/RenderingControl1 TIMEOUT:1000 NT:'upnp:event'
     def __init__(self, url="", callback=""):
 
         self.url = url
@@ -37,8 +36,6 @@ class EventSubscriber:
         else:
             raise Exception('Error', response.status_code)
 
-        print response.headers
-
         return result
 
     def renew(self, sid, timeout=1000):
@@ -67,8 +64,6 @@ class EventSubscriber:
         else:
             raise Exception('Error', response.status_code)
 
-        print response.headers
-
         return result
 
     def cancel(self, sid):
@@ -85,14 +80,3 @@ class EventSubscriber:
             raise Exception('Error', response.status_code)
 
         pass
-
-
-if __name__ == '__main__':
-    # u'http://192.168.0.100:9197/upnp/event/RenderingControl1'
-    s = EventSubscriber()
-
-    result = s.subscribe()
-    print result
-
-    # print s.renew(result['sid'])
-    # print s.cancel(result['sid'])
