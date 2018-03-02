@@ -32,9 +32,16 @@ class SamsungTVActionList(object):
         res = "\n"
         res += self.label + "\n"
         for item in self.result:
-            for field in self.fields:
-                res += item[field] + "  "
-                pass
+
+            if isinstance(item, dict):
+                for field in self.fields:
+                    res += item[field] + "  "
+                    pass
+            elif isinstance(item, str):
+                res += item
+            else:
+                raise Exception("Unknown item type {}".format(type(item)))
+
             res += "\n"
 
         return res
@@ -200,69 +207,60 @@ class SamsungTvApp(object):
             self.service_dial.install(arg)
         )
 
-    def key(self, arg):
-        return SamsungTVAction(
-            "Key Pressed %s" % arg,
-            self.remote_control.command(arg)
+    def keys(self, arg):
+
+        return SamsungTVActionList(
+            "Keys \n",
+            RemoteControl.KEY_CODES
         )
 
+    def key(self, arg):
+        """
+
+        :type arg: str
+        """
+
+        if arg.find(",") > 0:
+            key_codes = arg.split(",")
+
+            self.remote_control.connect()
+            for key_code in key_codes:
+                # self.key(key_code)
+                self.remote_control.command(key_code)
+            self.remote_control.close()
+
+            return SamsungTVAction(
+                "Keys Pressed \n " +
+                "\n ".join(key_codes)
+            )
+        else:
+            self.remote_control.connect()
+            result = self.remote_control.command(arg)
+            self.remote_control.close()
+
+            return SamsungTVAction(
+                "Key Pressed %s" % arg,
+                result
+            )
+
     def launch(self, arg):
+
+        self.remote_control.connect()
+        result = self.remote_control.launch(arg)
+        self.remote_control.close()
+
         return SamsungTVAction(
             "App Launched %s" % arg,
-            self.remote_control.launch(arg)
+            result
         )
+
+    def apps(self, arg=None):
+
+        self.remote_control.connect()
+        app_list = self.remote_control.apps()
+        self.remote_control.close()
+
+        return SamsungTVActionList("Apps \n", app_list, ["appId", "name"])
 
     def run(self, method, arg):
         return self.__getattribute__(method)(arg)
-
-#
-# def usage_option(name, description):
-#     return "\t--%s     \t %s" % (name, description)
-#
-#
-# def usage():
-#     print ""
-#     print "Usage: " + sys.argv[0] + " [OPTIONS]"
-#     print usage_option("scan", "SSPD Scan")
-#     print usage_option("volume", "Set Volume")
-#     print usage_option("volup", "Incr Volume")
-#     print usage_option("voldown", "Decr Volume")
-#     print usage_option("help", "This help menu")
-#     print usage_option("start_httpd", "Start http server")
-#     print usage_option("stop_httpd", "Stop http server")
-#     print ""
-#
-#
-# if __name__ == "__main__":
-#
-#     try:
-#         opts, args = getopt.getopt(sys.argv[1:], "s:hv", ["help", "version",
-#                                                           "scan", "rescan",
-#                                                           "volume=", "volup", "voldown", "mute", "unmute",
-#                                                           "file=",
-#                                                           "add_file=",
-#                                                           "play", "stop", "next", "prev",
-#                                                           "start_httpd", "stop_httpd",
-#
-#                                                           "app=", "app_on=", "app_off=", "app_install="
-#                                                           ])
-#     except getopt.GetoptError, err:
-#         print(err)
-#         sys.exit(-1)
-#
-#     for o, arg in opts:
-#         if o in ("-h", "--help"):
-#             usage()
-#             sys.exit()
-#         elif o in ("-V", "--version"):
-#             print VERSION
-#             sys.exit(0)
-#         elif o in ("-s", "--scan"):
-#             SamsungTvApp.scan()
-#         elif o in ("--rescan"):
-#             SamsungTvApp.scan(True)
-#         else:
-#             tv = SamsungTvApp()
-#
-#             method = o.replace("--", "")
-#             print tv.run(method, arg)

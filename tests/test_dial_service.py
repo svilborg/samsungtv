@@ -27,3 +27,29 @@ class TestDialService(TestCase):
     #     result = service.get("Netflix")
 
 
+    # def test_real(self):
+    #     service = DialService("http://192.168.0.100:8080/ws/app/")
+    #
+    #     name = "YouTube"
+    #     print "=================="
+    #     print service.start(name)
+    #
+    #     print "=================="
+    #     print service.get(name)
+    #
+    #     print "=================="
+    #     print service.get("Netflix")
+    #
+    #     print "=================="
+    #     print service.get("NetflixNope")
+    #
+    #     print "=================="
+    #     print service.get("uk.co.bbc.iPlayer")
+    #
+    #     import time
+    #     time.sleep(2)
+    #
+    #     print "=================="
+    #     print service.stop(name)
+    #     # print service.install("uk.co.bbc.iPlayer")
+

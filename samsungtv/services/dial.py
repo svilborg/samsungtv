@@ -72,33 +72,3 @@ class DialService(object):
             if app['links'] is not None:
                 requests.delete(self.url + name + "/" + app['links']['rel'])
 
-
-if __name__ == "__main__":
-    print "DialService"
-
-    name = "YouTube"
-
-    service = DialService("http://192.168.0.100:8080/ws/app/")
-
-    print "=================="
-    print service.start(name)
-
-    print "=================="
-    print service.get(name)
-
-    print "=================="
-    print service.get("Netflix")
-
-    print "=================="
-    print service.get("NetflixNope")
-
-    print "=================="
-    print service.get("uk.co.bbc.iPlayer")
-
-    import time
-
-    time.sleep(2)
-
-    print "=================="
-    print service.stop(name)
-    # print service.install("uk.co.bbc.iPlayer")

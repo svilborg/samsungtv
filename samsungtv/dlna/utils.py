@@ -39,14 +39,16 @@ class Cache(object):
 def detect_ip_address():
     """Return the local ip-address"""
     # https://stackoverflow.com/a/166589
+
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
     ip_address = s.getsockname()[0]
     s.close()
+
     return ip_address
 
 
-def clean_ns_from_list (data=None) :
+def clean_ns_from_list(data=None):
     if data is None:
         data = {}
 
@@ -57,6 +59,7 @@ def clean_ns_from_list (data=None) :
             result[key] = el
 
     return result
+
 
 def etree_to_dict(t):
     d = {t.tag: {} if t.attrib else None}

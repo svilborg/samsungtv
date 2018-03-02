@@ -7,7 +7,7 @@ import websocket
 class RemoteControl():
     URL = "ws://{}:{}/api/v2/channels/samsung.remote.control?name={}"
 
-    key_codes = [
+    KEY_CODES = [
         "KEY_POWEROFF", "KEY_UP", "KEY_DOWN", "KEY_LEFT", "KEY_RIGHT", "KEY_CHUP", "KEY_CHDOWN", "KEY_ENTER",
         "KEY_RETURN", "KEY_EXIT", "KEY_CONTENTS", "KEY_CH_LIST", "KEY_MENU", "KEY_SOURCE", "KEY_GUIDE", "KEY_TOOLS",
         "KEY_INFO", "KEY_RED", "KEY_GREEN", "KEY_YELLOW", "KEY_BLUE", "KEY_PANNEL_CHDOWN", "KEY_VOLUP",
@@ -56,21 +56,15 @@ class RemoteControl():
 
     def test(self, d):
 
-        # msg = {
-        #     "method": "ms.channel.emit",
-        #     "params": {
-        #         "event": "ed.apps.search",
-        #         # "event": "seek",
-        #         "data": 100,
-        #         "to": "host"
-        #     }
-        # }
-        #
-        # msg = {"method": "ms.channel.emit",
-        #        "params": {
-        #            "event": "ed.installedApp.get", "to": "host"
-        #        }
-        #        }
+        msg = {
+            "method": "ms.channel.emit",
+            "params": {
+                "event": "ed.apps.search",
+                # "event": "seek",
+                "data": 100,
+                "to": "host"
+            }
+        }
 
         response = self._send_and_receive(msg)
         return response
@@ -102,6 +96,7 @@ class RemoteControl():
             }}
 
         response = self._send_and_receive(msg)
+        time.sleep(self.key_delay)
 
         return response
 

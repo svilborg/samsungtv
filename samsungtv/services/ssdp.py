@@ -2,26 +2,11 @@ import socket
 
 
 class SSDPDiscovery(object):
-
     ip = "239.255.255.250"
     port = 1900
 
     ST_ALL = "ssdp:all"
     ST_ROOT = "upnp:rootdevice"
-
-    def _get_response(self, response):
-        headers, addr = response
-
-        result = {
-            'ip' : addr[0],
-            'port' : addr[1]
-        }
-
-        for s in headers.splitlines():
-            x = s.split(": ")
-            if len(x) == 2:
-                result[x[0].lower()] = x[1]
-        return result
 
     def discover(self, service, timeout=5.0, retries=1, mx=3):
 
@@ -31,7 +16,7 @@ class SSDPDiscovery(object):
             'Accept: */*',
             'MAN: "ssdp:discover"',
             'ST: {st}',
-            'MX: {mx}','',''])
+            'MX: {mx}', '', ''])
 
         message = message.format(self, st=service, mx=mx)
 
@@ -55,3 +40,17 @@ class SSDPDiscovery(object):
                     break
 
         return responses.values()
+
+    def _get_response(self, response):
+        headers, addr = response
+
+        result = {
+            'ip': addr[0],
+            'port': addr[1]
+        }
+
+        for s in headers.splitlines():
+            x = s.split(": ")
+            if len(x) == 2:
+                result[x[0].lower()] = x[1]
+        return result

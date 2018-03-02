@@ -59,9 +59,3 @@ class DlnaDevice(object):
                + str(self.info["modelDescription"]) + " ] @  " + self.location + "\n"
 
         return res
-
-
-if __name__ == "__main__":
-    print "DlnaDevice"
-    d = DlnaDevice("http://192.168.0.100:9197/dmr")
-    print d

@@ -34,7 +34,7 @@ if __name__ == "__main__":
                                                           "play", "stop", "next", "prev",
                                                           "start_httpd", "stop_httpd",
                                                           "app=", "app_on=", "app_off=", "app_install=",
-                                                          "key="
+                                                          "key=", "keys", "apps", "launch="
                                                           ])
     except getopt.GetoptError, err:
         print(err)

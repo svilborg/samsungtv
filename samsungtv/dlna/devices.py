@@ -53,21 +53,3 @@ class DlnaDevices(object):
         if self.cache:
             Cache.clear(self.cache)
 
-
-if __name__ == "__main__":
-
-    print "DlnaDevices"
-
-    d = DlnaDevices("d_test_cache")
-    devices = d.get_devices()
-
-    for location, device in devices.items():
-        print str(device) + "   - " + device.info['deviceType']
-        # print device.info
-        print ""
-
-    print "============"
-    # print d.get_device_by_type("urn:schemas-upnp-org:device:MediaRenderer:1")
-    device = d.get_device_by_type("urn:dial-multiscreen-org:device:dialreceiver:1")
-    print device
-    print device.applicationUrl
