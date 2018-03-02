@@ -5,6 +5,16 @@ from base import UPnPServiceBase
 
 class UPnPServiceAVTransport(UPnPServiceBase):
 
+    SEEK_UNITS = [
+        "TRACK_NR",
+        "REL_TIME",
+        "ABS_TIME",
+        "ABS_COUNT",
+        "REL_COUNT",
+        "X_DLNA_REL_BYTE",
+        "FRAME",
+    ]
+
     def __init__(self, ip, port="9197", id='0', config=None):
         super(UPnPServiceAVTransport, self).__init__(ip, port)
 
@@ -12,8 +22,8 @@ class UPnPServiceAVTransport(UPnPServiceBase):
         self.stype = 'AVTransport'
         self.endpoint = ''
 
-        if config is not None :
-           self.endpoint = config['controlURL']
+        if config is not None:
+            self.endpoint = config['controlURL']
 
     def url(self, uri):
         action = 'SetAVTransportURI'
@@ -164,13 +174,6 @@ class UPnPServiceAVTransport(UPnPServiceBase):
         return result
 
     def seek(self, unit='TRACK_NR', target=1):
-        # TRACK_NR
-        # REL_TIME
-        # ABS_TIME
-        # ABS_COUNT
-        # REL_COUNT
-        # X_DLNA_REL_BYTE
-        # FRAME
 
         action = 'Seek'
         args = [('InstanceID', self.id), ('Unit', unit), ('Target', target)]
@@ -194,84 +197,3 @@ class UPnPServiceAVTransport(UPnPServiceBase):
         response = self._send_cmd(action, args)
 
         return self._get_result(response)
-
-
-if __name__ == "__main__":
-    print "UPnPServiceAVTransport \n"
-    import pprint
-    import time
-
-    t = UPnPServiceAVTransport('192.168.0.100', '9197', config={'controlURL' : '/dmr/upnp/control/AVTransport1'})
-
-    # l = [
-    # 'http://i.imgur.com/6yHmlwT.jpg',
-    # 'http://i.imgur.com/qCoybZR.jpg',
-    # 'http://i.imgur.com/hl4mfZf.jpg',
-    # ]
-
-    # is_play=False
-
-    # for img in l:
-
-    #     print img
-
-    #     if not is_play:
-    #         print t.set_url(img)
-    #         print t.play()
-
-    #         is_play=True
-
-    #         time.sleep(1)
-
-    #     else:
-    #         print t.set_next_url(img)
-    #         print t.next()
-
-    #     time.sleep(5)
-    # pprint.pprint (t.get_transport_info())
-    # exit(1)
-
-    # print t.set_url("http://192.168.0.103:8000/media/t.mp4")
-    # print t.set_url("http://192.168.0.103:8000/media/test.jpg#1")
-    # print t.set_next_url("http://192.168.0.103:8000/media/test2.jpg#2")
-    # time.sleep(1)
-
-    # print "===================="
-    # print t.play()
-
-    # print "===================="
-    # pprint.pprint (t.get_position_info())
-
-    # time.sleep(2)
-    # print "===================="
-
-    # time.sleep(4)
-    # print "===================="
-    # print t.pause() 
-
-    # print "===================="
-    # pprint.pprint(t.media_info())
-
-    # time.sleep(4)
-    # print t.next()
-
-    # print "===================="
-    # pprint.pprint(t.media_info())
-
-    # exit(1)
-
-    # # print t.set_url("http://192.168.0.103:8000/media/test.jpg")
-    # # print t.set_next_url("http://192.168.0.103:8000/media/test3.jpg")
-    # # print t.seek('REL_TIME', '00:00:05')
-
-    # # print t.prefetch_url("http://192.168.0.103:8000/media/test3.jpg")
-    # # print t.stop()
-    # print "===================="
-    # pprint.pprint(t.device_cap())
-
-    # print "===================="
-    # pprint.pprint(t.get_transport_info())
-    print "===================="
-    pprint.pprint(t.get_transport_settings())
-
-

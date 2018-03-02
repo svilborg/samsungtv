@@ -24,7 +24,7 @@ class UPnPServiceWfaConfig(UPnPServiceBase):
         if res.get("faultcode"):
             raise Exception("Error {}".format(res.get("faultstring")), res.get("faultstring"))
 
-        if not res.get("NewDeviceInfo") :
-            raise  Exception("Missing Device Info")
+        if not res.get("NewDeviceInfo"):
+            raise Exception("Missing Device Info")
 
         return base64.b64decode(res['NewDeviceInfo'])

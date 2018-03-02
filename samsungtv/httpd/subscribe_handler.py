@@ -30,8 +30,6 @@ def etree_to_dict(t):
 class SubscribeHttpRequestHandler(BaseHTTPRequestHandler):
     NS = "{urn:schemas-upnp-org:event-1-0}"
 
-
-
     def do_NOTIFY(self):
 
         result = {}
@@ -40,10 +38,8 @@ class SubscribeHttpRequestHandler(BaseHTTPRequestHandler):
         content_len = int(self.headers.get('content-length', 0))
         data = self.rfile.read(content_len)
 
-
-        print "RAWWWWWWWWWWWWWWWWWWWWWWWWWWW"
-        print data
-
+        # print "RAWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+        # print data
 
         properties = {}
         event = {}
@@ -55,7 +51,7 @@ class SubscribeHttpRequestHandler(BaseHTTPRequestHandler):
                     # "Raw" Properties
                     properties[prop.tag] = prop.text
 
-                    if prop.text is not None and prop.text.startswith("<") :
+                    if prop.text is not None and prop.text.startswith("<"):
                         # // Extract Event
                         xml_string = re.sub(' xmlns="[^"]+"', '', prop.text, count=1)
                         pxml = cElementTree.fromstring(xml_string)
@@ -136,21 +132,3 @@ class SubscribeHttpRequestHandler(BaseHTTPRequestHandler):
         pprint.pprint(result)
         print ""
 
-if __name__ == "__main__":
-
-    host = ""
-    port = 8007
-
-    try:
-        # SubscribeRequestHandler.protocol_version = "HTTP/1.0"
-
-        httpd = HTTPServer((host, port), SubscribeHttpRequestHandler)
-
-    except Exception as e:
-        sys.stderr.write(str(e))
-        sys.exit(-1)
-
-    print "Serving on " + host + ":" + str(port) + " ... "
-
-    while True:
-        httpd.handle_request()
