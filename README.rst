@@ -2,20 +2,6 @@
 Samsung TV
 ==========
 
-
-.. image:: https://img.shields.io/pypi/v/samsungtv.svg
-        :target: https://pypi.python.org/pypi/samsungtv
-
-.. image:: https://img.shields.io/travis/svilborg/samsungtv.svg
-        :target: https://travis-ci.org/svilborg/samsungtv
-
-.. image:: https://readthedocs.org/projects/samsungtv/badge/?version=latest
-        :target: https://samsungtv.readthedocs.io/en/latest/?badge=latest
-        :alt: Documentation Status
-
-
-
-
 Samsung Tv UPnP/DIAL/Remote Automations
 
 

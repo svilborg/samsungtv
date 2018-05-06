@@ -75,7 +75,6 @@ class SamsungTvApp(object):
             exit(1)
 
         # c = DlnaDeviceServices.subscribe_to_all(tv_device, self.uri)
-        # c = DlnaDeviceServices.subscribe_to_all(dial_device, self.uri)
         # print c
         # exit(1)
 

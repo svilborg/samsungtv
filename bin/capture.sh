@@ -4,6 +4,15 @@ pulseaudio-monitor() {
     echo $(pactl list | grep -A2 '^Source #'  | grep 'Name: .*\.monitor$' | awk '{print $NF}' | tail -n1)
 }
 
+# cvlc screen:// \
+# :sout=#transcode{vcodec=h264,vb=0,scale=0,acodec=mpga,ab=128,channels=2,samplerate=44100}:file{dst=./screen.mp4} :sout-keep
+
+# cvlc screen:// :screen-fps=25 :screen-caching=100 \
+# --sout '#transcode{vcodec=MJPG,vb=0,width=1022,height=575,acodec=none}:http{mux=ogg,dst=:8554/myscreen}'
+
+# cvlc screen:// :screen-fps=25 :screen-caching=100 \
+# --sout '#transcode{h264,vb=0,scale=0,acodec=mpga,ab=128,channels=2,samplerate=44100}:http{mux=ogg,dst=:8554/myscreen}'
+
 desktop-capture-ff() {
 
     local RESOLUTION="640x360"

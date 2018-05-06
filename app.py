@@ -1,8 +1,5 @@
 import getopt
-
 import sys
-
-from samsungtv.services.dial import DialService
 
 from samsungtv import SamsungTvApp
 

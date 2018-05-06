@@ -41,7 +41,7 @@ setup(
     name='samsungtv',
     entry_points={
         'console_scripts': [
-            'samsuntv=cmd:main',
+            'samsungtv-cli=samsungtv.__main__:main',
         ],
     },
     packages=find_packages(include=['samsungtv*']),
