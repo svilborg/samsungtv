@@ -10,11 +10,22 @@ def usage_option(name, description):
 def usage():
     print ""
     print "Usage: " + sys.argv[0] + " [OPTIONS]"
-    print usage_option("scan", "SSPD Scan - List devices")
+    print usage_option("scan", "SSPD Scan")
     print usage_option("rescan", "SSPD Scan (refreshed cache)")
     print usage_option("volume", "Set Volume")
     print usage_option("volup", "Incr Volume")
     print usage_option("voldown", "Decr Volume")
+    print usage_option("mute", "Mute")
+    print usage_option("unmute", "Unmute")
+    print usage_option("app_on", "Start App")
+    print usage_option("app_off", "Stop App")
+    print usage_option("file", "Play Media File")
+    print usage_option("add_file", "Add Media File")
+    print usage_option("play", "Play Media")
+    print usage_option("stop", "Stop Media")
+    print usage_option("key", "Send a Key")
+    print usage_option("keys", "List Available Keys")
+    print usage_option("launch", "Launch App")
     print usage_option("help", "This help menu")
     print usage_option("start_httpd", "Start http server")
     print usage_option("stop_httpd", "Stop http server")
